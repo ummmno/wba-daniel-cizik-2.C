@@ -1,0 +1,26 @@
+svg{
+    width:100%;
+    position:absolute;
+    top:50%;
+    left:40%;
+    transform:translate(-50%,-50%)
+  }
+  svg text{
+    font-family:arial;
+    font-size:5rem;
+    stroke: blue;
+    stroke-width:2px;
+    fill:transparent;
+    animation:anim 5s infinite alternate;
+  }
+  @keyframes anim{
+    from{stroke-dasharray:0 70%;}
+    to{stroke-dasharray:50% 0;
+    stroke-dashoffset:1%;}
+  }
+  @media(max-width:400px){
+    svg{    
+      width:440px;
+      left:30%;
+    }
+  }
