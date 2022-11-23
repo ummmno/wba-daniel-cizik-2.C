@@ -1,9 +1,15 @@
-body{
+.toppart{
     background-image: url(files/Cosmic-Gradient-14.jpg);
+    display: inline-block;
+    min-height: 100vh;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     margin: 0; 
+}
+
+body{
+    margin: 0;
 }
 
 *{
@@ -52,4 +58,29 @@ body{
     width: 60%;
     border-radius: 7pt;
     box-shadow: 0pt 0pt 20pt 3pt white;
+}
+
+.flexbox{
+    display: flex;
+    padding: 40px;
+    width: 100vw;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: white;
+}
+
+.flextext{
+    margin-left: 10px;
+    margin-right: 10px;
+    display: flex;
+    height: 250px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: lightcoral;
+}
+
+.blueone{
+    background-color: aqua;
 }
