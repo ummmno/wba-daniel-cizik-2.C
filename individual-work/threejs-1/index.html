@@ -59,14 +59,9 @@
             // generate sphere mesh vertices from a radius
             const sphereRadius = 3;
             const sphereWidthDivisions = 5;
-            const sphereHeightDivisions = 5;
+            const sphereHeightDivisions = 128;
             const sphereGeometry = new THREE.SphereBufferGeometry(sphereRadius, sphereWidthDivisions, sphereHeightDivisions);
 
-            // sphere smoothing
-            sphereGeometry.computeVertexNormals();
-            
-            //make the sphere smoother
-            sphereGeometry.mergeVertices();
 
             // load a local image
             const sphereTextureUrl = 'Cat03.jpg';
