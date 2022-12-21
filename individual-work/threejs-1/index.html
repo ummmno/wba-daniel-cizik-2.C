@@ -58,8 +58,8 @@
 
             // generate sphere mesh vertices from a radius
             const sphereRadius = 3;
-            const sphereWidthDivisions = 128;
-            const sphereHeightDivisions = 128;
+            const sphereWidthDivisions = 5;
+            const sphereHeightDivisions = 5;
             const sphereGeometry = new THREE.SphereBufferGeometry(sphereRadius, sphereWidthDivisions, sphereHeightDivisions);
 
             // pull a map of the world from the internet
@@ -141,7 +141,6 @@
                 renderer.render(scene, camera);
                 requestAnimationFrame(updateSphere);
             }
-
             updateSphere();
         </script>
 	</body>
