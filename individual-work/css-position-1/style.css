@@ -1,5 +1,6 @@
 body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+  margin: 0 100px;
 }
 /* Barvy
 Světlá barva pozadí: #f2b880
@@ -61,7 +62,7 @@ Barva text v oranžovém pozadí: #752400
 
 .hero-img img{
   position: relative;
-  height: 50vh;
+  height: 25vw;
   z-index: 2;
 }
 
@@ -83,6 +84,7 @@ Barva text v oranžovém pozadí: #752400
 
 .hero-text {
   margin: 20px;
+  color: #3e2e1e;
 }
 
 .text {
