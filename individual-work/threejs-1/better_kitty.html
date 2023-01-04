@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+            #scene-container {
+                width: 100vw;
+                height: 100vh;
+            }
+		</style>
+	</head>
+	<body>
+        <div id="scene-container"></div>
+        <script type="importmap">
+            {
+                "imports": {
+                "three": "file:///C:/Users/Tommy/Desktop/threejs/js/three.min.js"
+                }
+            }
+        </script>
+        <script type="module">
+
+            import * as THREE from './js/three.module.js';
+
+            //const controls = new OrbitControls( camera, renderer.domElement );
+            import {
+                BoxBufferGeometry,
+                Color,
+                Mesh,
+                MeshBasicMaterial,
+                PerspectiveCamera,
+                Scene,
+                WebGLRenderer,
+            } from './js/three.module.js';
+
+            // Get a reference to the container element that will hold our scene
+            const container = document.querySelector('#scene-container');
+
+            // create a Scene
+            const scene = new Scene();
+
+            // Set the background color
+            scene.background = new Color('skyblue');
+
+            // Create a camera
+            const fov = 35; // AKA Field of View
+            const aspect = container.clientWidth / container.clientHeight;
+            const near = 0.1; // the near clipping plane
+            const far = 100; // the far clipping plane
+
+            const camera = new PerspectiveCamera(fov, aspect, near, far);
+
+            // every object is initially created at ( 0, 0, 0 )
+            // move the camera back so we can view the scene
+            camera.position.set(0, 0, 20);
+
+            // generate sphere mesh vertices from a radius
+            const sphereRadius = 3;
+            const sphereWidthDivisions = 5;
+            const sphereHeightDivisions = 64;
+            const sphereGeometry = new THREE.SphereBufferGeometry(sphereRadius, sphereWidthDivisions, sphereHeightDivisions);
+
+
+            // load a local image
+            const sphereTextureUrl = 'Cat03.jpg';
+            
+            //use it as texture
+            const sphereTexture = new THREE.TextureLoader().load(sphereTextureUrl, () => {console.log("done")}, undefined, () => {console.log("error")});
+
+            //make the texture bigger
+            sphereTexture.repeat.set(2, 1);
+
+            // make the texture wrap around the sphere by clamping the edges
+            sphereTexture.wrapS = THREE.RepeatWrapping;
+            sphereTexture.wrapT = THREE.RepeatWrapping;
+
+
+            // make a phone red ish material
+            const sphereMaterial = new THREE.MeshPhongMaterial({
+                map: sphereTexture,
+            });
+
+            // make a mesh from the geometry and material
+            const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+            // add the sphere to the scene
+            scene.add(sphereMesh);
+
+            // create the renderer
+            const renderer = new WebGLRenderer();
+
+            // next, set the renderer to the same size as our container element
+            renderer.setSize(container.clientWidth, container.clientHeight);
+
+            // finally, set the pixel ratio so that our scene will look good on HiDPI displays
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            // add the automatically created <canvas> element to the page
+            container.append(renderer.domElement);
+            
+            // add subtle ambient lighting
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+
+            // add spotlight for the shadows
+            const spotLight = new THREE.SpotLight(0xffffff);
+            spotLight.position.set(10, 10, 10);
+            scene.add(spotLight);
+
+            // render, or 'create a still image', of the scene
+            renderer.render(scene, camera);
+
+            // make it rotate when the mouse moves but still ambiently rotate when it dosent
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            // detect when the mouse is stationary for 3 seconds
+            let mouseStationary = false;
+            let mouseStationaryTimeout = null;
+            const mouseStationaryTimeoutDuration = 1000;
+            let jiggleIntensity = 1;
+            
+            const onDocumentMouseStationary = (event) => {
+                if (mouseStationaryTimeout) {
+                    clearTimeout(mouseStationaryTimeout);
+                    jiggleIntensity = 0;
+                }
+                mouseStationaryTimeout = setTimeout(() => {
+                    mouseStationary = true;
+                    console.log("now")
+                    jiggleIntensity = 1;
+                }, mouseStationaryTimeoutDuration);
+            }
+
+            const onDocumentMouseMove = (event) => {
+                mouseX = (event.clientX - windowHalfX);
+                mouseY = (event.clientY - windowHalfY);
+                console.log("Mouse moved")
+                onDocumentMouseStationary(event);
+            }
+
+            document.addEventListener('mousemove', onDocumentMouseMove);
+
+            let frame = 0
+            const updateSphere = (event) => {
+                targetX = mouseX * .001;
+                targetY = mouseY * .001;
+
+                sphereMesh.rotation.y += .05 * (targetX - sphereMesh.rotation.y);
+                sphereMesh.rotation.x += .05 * (targetY - sphereMesh.rotation.x);
+                sphereMesh.rotation.z += .05 * (targetY - sphereMesh.rotation.x) + (0.01 * jiggleIntensity) * Math.sin(0.25*frame);
+
+                renderer.render(scene, camera);
+                frame++;
+                requestAnimationFrame(updateSphere);
+            }
+            updateSphere();
+        </script>
+	</body>
+</html>

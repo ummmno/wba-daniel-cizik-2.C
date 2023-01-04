@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+            #scene-container {
+                width: 100vw;
+                height: 100vh;
+            }
+		</style>
+	</head>
+	<body>
+        <div id="scene-container"></div>
+        <script type="importmap">
+            {
+                "imports": {
+                "three": "file:///C:/Users/Tommy/Desktop/threejs/js/three.min.js"
+                }
+            }
+        </script>
+        <script type="module">
+
+            import * as THREE from './js/three.module.js';
+
+            //const controls = new OrbitControls( camera, renderer.domElement );
+            import {
+                BoxBufferGeometry,
+                Color,
+                Mesh,
+                MeshBasicMaterial,
+                PerspectiveCamera,
+                Scene,
+                WebGLRenderer,
+            } from './js/three.module.js';
+
+            // Get a reference to the container element that will hold our scene
+            const container = document.querySelector('#scene-container');
+
+            // create a Scene
+            const scene = new Scene();
+
+            // Set the background color
+            scene.background = new Color('skyblue');
+
+            // Create a camera
+            const fov = 35; // AKA Field of View
+            const aspect = container.clientWidth / container.clientHeight;
+            const near = 0.1; // the near clipping plane
+            const far = 100; // the far clipping plane
+
+            const camera = new PerspectiveCamera(fov, aspect, near, far);
+
+            // every object is initially created at ( 0, 0, 0 )
+            // move the camera back so we can view the scene
+            camera.position.set(0, 0, 20);
+
+            // create a spline in the shape of a heart
+            const spline = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0, 1, 0),
+                new THREE.Vector3(1, 2, 0),
+                new THREE.Vector3(2, 1, 0),
+                new THREE.Vector3(0, -1, 0),
+                new THREE.Vector3(-2, 1, 0),
+                new THREE.Vector3(-1, 2, 0),
+                new THREE.Vector3(0, 1, 0),
+            ]);
+
+            let loader = new THREE.FontLoader();
+
+            // 
+
+            // create a apline from text
+            // const text = new THREE.TextBufferGeometry('Hello, World!', {
+            //     font: new THREE.Font(),
+            //     size: 1,
+            //     height: 0.1,
+            //     curveSegments: 12,
+            //     bevelEnabled: true,
+            //     bevelThickness: 0.1,
+            //     bevelSize: 0.1,
+            //     bevelOffset: 0,
+            //     bevelSegments: 5,
+            // });
+
+            // // create a spline from the text
+            // const textSpline = new THREE.CatmullRomCurve3(
+            //     text
+            //         .getSpacedPoints(100)
+            //         .map((point) => new THREE.Vector3(point.x, point.y, point.z))
+            // );
+
+            // create a geometry based on the spline
+            const geometry = new THREE.TubeBufferGeometry(spline, 100, 0.1, 8, false);
+
+            // create a default phong material
+            const material = new THREE.MeshPhongMaterial({
+                color: 0x00ff00,
+                side: THREE.DoubleSide,
+            });
+
+            // create a Mesh containing the geometry and material
+            const mesh = new THREE.Mesh(geometry, material);
+
+            // add the mesh to the scene object
+            //scene.add(mesh);
+
+            // create a sphere particle
+            const sphere = new THREE.Mesh(
+                new THREE.SphereBufferGeometry(0.1, 16, 8),
+                new THREE.MeshPhongMaterial({ color: 0xff0000 })
+            );
+
+            // instance the sphere
+            const particles = new THREE.InstancedMesh(
+                sphere.geometry,
+                sphere.material,
+                30
+            );
+
+            // position the particles along the spline
+            for (let i = 0; i < 30; i++) {
+                const t = i / 30;
+                const position = spline.getPointAt(t);
+                particles.setMatrixAt(i, new THREE.Matrix4().makeTranslation(position.x, position.y, position.z));
+            }
+
+
+            // add the particles to the scene
+            scene.add(particles);
+
+            // create the renderer
+            const renderer = new WebGLRenderer();
+
+            // next, set the renderer to the same size as our container element
+            renderer.setSize(container.clientWidth, container.clientHeight);
+
+            // finally, set the pixel ratio so that our scene will look good on HiDPI displays
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            // add the automatically created <canvas> element to the page
+            container.append(renderer.domElement);
+            
+            // add subtle ambient lighting
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+
+            // add spotlight for the shadows
+            const spotLight = new THREE.SpotLight(0xffffff);
+            spotLight.position.set(10, 10, 10);
+            scene.add(spotLight);
+
+            // render, or 'create a still image', of the scene
+            renderer.render(scene, camera);
+
+
+            // make it rotate when the mouse moves but still ambiently rotate when it dosent
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            const onDocumentMouseMove = (event) => {
+                mouseX = (event.clientX - windowHalfX);
+                mouseY = (event.clientY - windowHalfY);
+            }
+
+            document.addEventListener('mousemove', onDocumentMouseMove);
+
+            let t = 0;
+            function render() {
+                // Rotate heart
+                targetX = mouseX * .001;
+                targetY = mouseY * .001;
+
+                particles.rotation.y += .1 * (targetX - particles.rotation.y);
+                particles.rotation.x += .1 * (targetY - particles.rotation.x);
+                particles.rotation.z += .1 * (targetY - particles.rotation.x);
+
+                renderer.render(scene, camera);
+
+                requestAnimationFrame(render);
+                t += 0.001;
+                for (let i = 0; i < 30; i++) {
+                    const position = spline.getPointAt((t + i / 30) % 1);
+                    particles.setMatrixAt(i, new THREE.Matrix4().makeTranslation(position.x, position.y, position.z));
+                }
+                particles.instanceMatrix.needsUpdate = true;
+                console.log("Draw")
+                renderer.render(scene, camera);
+            }
+            render();
+
+        </script>
+	</body>
+</html>
