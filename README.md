@@ -4,6 +4,8 @@
 
 - 🎲 Snad to bude fungovat, **urpimne nevim**
 
+- :)
+
 - 🤝 Pravdepodobne budupotrebovat **vsechno**
 
 - 💻 Link na hostlou [webovku](https://cizik.netlify.app/)
