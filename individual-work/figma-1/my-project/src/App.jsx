@@ -1,29 +1,27 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
+import logo from "./assets/logo.svg";
 import "./App.css";
+import { HeaderNav } from "./header";
+import { HeroSection } from "./herosection";
+import { AdSection } from "./adsection";
 
-function Button(Props) {
-  return (
-    <button class="hover:bg-orange-300 inline-flex items-center uppercase mx-1 p-2">
-      {Props.text}
-    </button>
-  );
-}
 function App() {
   return (
     <div className="App">
-      <div class="bg-orange-200 w-screen h-20 flex felx-row justify-evenly items-center">
-        <div class="flex">
-          <h1>logo</h1>
-        </div>
-        <div class="flex">
-          <div class="flex flex-row justify-evenly">
-            <Button text="Dovolena"/>
-            <Button text="praktice informace"/>
-            <Button text="kontakt"/>
+      <div class="bg-[url('./assets/hero-image.png')] h-screen bg-no-repeat w-screen bg-cover">
+        <div class="grid grid-rows-4 grid-cols-2 h-screen">
+          <div class="w-max col-span-2">
+            <HeaderNav />
+          </div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div class="row-span-2 p-7 mb-10 mx-10">
+            <HeroSection />
           </div>
         </div>
       </div>
+      <AdSection />
     </div>
   );
 }
