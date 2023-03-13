@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg";
 import burgermenu from "../assets/burgermenu.svg";
 
@@ -16,12 +17,22 @@ export function HeaderNav() {
       <div class="flex">
         <img class="lg:w-28 s:ml-10 s:w-20 h-auto" src={logo} alt="logo" />
       </div>
-      <img class="s:w-14 s:mr-10 s:h-auto lg:hidden" src={burgermenu} alt="burgermenu" />
+      <img
+        class="s:w-14 s:mr-10 s:h-auto lg:hidden"
+        src={burgermenu}
+        alt="burgermenu"
+      />
       <div class="flex s:hidden">
         <div class="flex flex-row justify-evenly">
-          <ButtonMain text="Dovolená" />
-          <ButtonMain text="Prakticé informace" />
-          <ButtonMain text="Kontakt" />
+          <Link to="/">
+            <ButtonMain text="Dovolená" />
+          </Link>
+          <Link to="/info">
+            <ButtonMain text="Prakticé informace" />
+          </Link>
+          <Link to="/contacts">
+            <ButtonMain text="Kontakt" />
+          </Link>
         </div>
       </div>
     </div>
