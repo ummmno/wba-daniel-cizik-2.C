@@ -1,0 +1,23 @@
+$grid-width: 75%; // set the width of the grid
+
+.grid {
+  user-select: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  justify-items: center;
+  align-items: center;
+  width: $grid-width;
+  margin: 0 auto;
+
+  img {
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    width: 100%;
+
+    &:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  }
+}

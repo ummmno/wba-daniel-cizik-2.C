@@ -10,6 +10,7 @@ function Destination(Props){
       <img class="s:w-32 s:h-32"src={Props.img}></img>
       <div class="s:flex s:flex-col s:pl-2">
         <h1 class="text-xl py-2">{Props.title}</h1>
+        <h1 class="text-lg py-2">{Props.subtitle}</h1>
         <p class="lg:p-1 s:text-xs s:pb-2">{Props.text}</p>
       </div>
     </div>

@@ -1,0 +1,21 @@
+.grid {
+  user-select: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  justify-items: center;
+  align-items: center;
+  width: 75%;
+  margin: 0 auto;
+}
+.grid img {
+  opacity: 0.6;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+.grid img:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/*# sourceMappingURL=style.css.map */
