@@ -1,145 +1,199 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>My first three.js app</title>
-		<style>
-			body { margin: 0; }
-            #scene-container {
-                width: 100vw;
-                height: 100vh;
-            }
-		</style>
-	</head>
-	<body>
-        <div id="scene-container"></div>
-        <script type="importmap">
-            {
-                "imports": {
-                "three": "file:///C:/Users/Tommy/Desktop/threejs/js/three.min.js"
-                }
-            }
-        </script>
-        <script type="module">
+  <head>
+    <meta charset="utf-8" />
+    <title>My first three.js app</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: rgb(41,63,200);
+        background: linear-gradient(152deg, rgba(41,63,200,1) 0%, rgba(66,33,159,1) 100%);
+      }
+      #scene-container {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="scene-container"></div>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "file:///C:/Users/Tommy/Desktop/threejs/js/three.min.js"
+        }
+      }
+    </script>
+    <script type="module">
+      import * as THREE from "./js/three.module.js";
 
-            import * as THREE from './js/three.module.js';
+      //const controls = new OrbitControls( camera, renderer.domElement );
+      import {
+        BoxBufferGeometry,
+        Color,
+        Mesh,
+        MeshBasicMaterial,
+        PerspectiveCamera,
+        Scene,
+        WebGLRenderer,
+      } from "./js/three.module.js";
 
-            //const controls = new OrbitControls( camera, renderer.domElement );
-            import {
-                BoxBufferGeometry,
-                Color,
-                Mesh,
-                MeshBasicMaterial,
-                PerspectiveCamera,
-                Scene,
-                WebGLRenderer,
-            } from './js/three.module.js';
+      function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
 
-            // Get a reference to the container element that will hold our scene
-            const container = document.querySelector('#scene-container');
+      // Get a reference to the container element that will hold our scene
+      const container = document.querySelector("#scene-container");
 
-            // create a Scene
-            const scene = new Scene();
+      // create a Scene
+      const scene = new Scene();
 
-            // Set the background color
-            scene.background = new Color('skyblue');
+      // Set the background color
+      scene.background = new Color("MidnightBlue");
 
-            // Create a camera
-            const fov = 35; // AKA Field of View
-            const aspect = container.clientWidth / container.clientHeight;
-            const near = 0.1; // the near clipping plane
-            const far = 100; // the far clipping plane
+      // Create a camera
+      const fov = 35; // AKA Field of View
+      const aspect = container.clientWidth / container.clientHeight;
+      const near = 0.1; // the near clipping plane
+      const far = 100; // the far clipping plane
 
-            const camera = new PerspectiveCamera(fov, aspect, near, far);
+      const camera = new PerspectiveCamera(fov, aspect, near, far);
 
-            // every object is initially created at ( 0, 0, 0 )
-            // move the camera back so we can view the scene
-            camera.position.set(0, 0, 20);
+      // every object is initially created at ( 0, 0, 0 )
+      // move the camera back so we can view the scene
+      camera.position.set(0, 0, 20);
 
-            // generate sphere mesh vertices from a radius
-            const sphereRadius = 3;
-            const sphereWidthDivisions = 5;
-            const sphereHeightDivisions = 64;
-            const sphereGeometry = new THREE.SphereBufferGeometry(sphereRadius, sphereWidthDivisions, sphereHeightDivisions);
+      // generate sphere mesh vertices from a radius
+      const sphereRadius = 3;
+      const sphereWidthDivisions = 24;
+      const sphereHeightDivisions = 24;
+      const sphereGeometry = new THREE.SphereBufferGeometry(
+        sphereRadius,
+        sphereWidthDivisions,
+        sphereHeightDivisions
+      );
 
+      // load a local image
+      const sphereTextureUrl = "earth.jpg";
 
-            // load a local image
-            const sphereTextureUrl = 'Cat03.jpg';
-            
-            //use it as texture
-            const sphereTexture = new THREE.TextureLoader().load(sphereTextureUrl, () => {console.log("done")}, undefined, () => {console.log("error")});
+      //use it as texture
+      const sphereTexture = new THREE.TextureLoader().load(
+        sphereTextureUrl,
+        () => {
+          console.log("done");
+        },
+        undefined,
+        () => {
+          console.log("error");
+        }
+      );
 
-            //make the texture bigger
-            sphereTexture.repeat.set(2, 1);
+      const sphereHeightMapUrl = "heightmap.jpg";
 
-            // make the texture wrap around the sphere by clamping the edges
-            sphereTexture.wrapS = THREE.RepeatWrapping;
-            sphereTexture.wrapT = THREE.RepeatWrapping;
+      //use it as texture
+      const sphereHeightMap = new THREE.TextureLoader().load(
+        sphereHeightMapUrl,
+        () => {
+          console.log("done");
+        },
+        undefined,
+        () => {
+          console.log("error");
+        }
+      );
 
+      //make the texture bigger
+      //sphereTexture.repeat.set(2, 1);
 
-            // make a phone red ish material
-            const sphereMaterial = new THREE.MeshPhongMaterial({
-                map: sphereTexture,
-            });
+      // make the texture wrap around the sphere by clamping the edges
+      sphereTexture.wrapS = THREE.RepeatWrapping;
+      sphereTexture.wrapT = THREE.RepeatWrapping;
 
-            // make a mesh from the geometry and material
-            const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      // make a phone red ish material
+      const sphereMaterial = new THREE.MeshPhongMaterial({
+        map: sphereTexture,
+        bumpMap: sphereHeightMap,
+      });
+      
+      sphereMaterial
+      // make a mesh from the geometry and material
+      const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
-            // add the sphere to the scene
-            scene.add(sphereMesh);
+      // add the sphere to the scene
+      scene.add(sphereMesh);
 
-            // create the renderer
-            const renderer = new WebGLRenderer();
+      // create the renderer
+      const renderer = new WebGLRenderer();
 
-            // next, set the renderer to the same size as our container element
-            renderer.setSize(container.clientWidth, container.clientHeight);
+      // next, set the renderer to the same size as our container element
+      renderer.setSize(container.clientWidth, container.clientHeight);
 
-            // finally, set the pixel ratio so that our scene will look good on HiDPI displays
-            renderer.setPixelRatio(window.devicePixelRatio);
+      // finally, set the pixel ratio so that our scene will look good on HiDPI displays
+      renderer.setPixelRatio(window.devicePixelRatio);
 
-            // add the automatically created <canvas> element to the page
-            container.append(renderer.domElement);
-            
-            // add subtle ambient lighting
-            const ambientLight = new THREE.AmbientLight(0x404040);
-            scene.add(ambientLight);
+      // add the automatically created <canvas> element to the page
+      container.append(renderer.domElement);
 
-            // add spotlight for the shadows
-            const spotLight = new THREE.SpotLight(0xffffff);
-            spotLight.position.set(10, 10, 10);
-            scene.add(spotLight);
+      // add subtle ambient lighting
+      const ambientLight = new THREE.AmbientLight(0x404040);
+      scene.add(ambientLight);
 
-            // render, or 'create a still image', of the scene
-            renderer.render(scene, camera);
+      // add spotlight for the shadows
+      const spotLight = new THREE.SpotLight(0xffffff);
+      spotLight.position.set(-5, 5, 10);
+      scene.add(spotLight);
 
-            // make it rotate when the mouse moves but still ambiently rotate when it dosent
-            let mouseX = 0;
-            let mouseY = 0;
-            let targetX = 0;
-            let targetY = 0;
+      // render, or 'create a still image', of the scene
+      renderer.render(scene, camera);
 
-            const windowHalfX = window.innerWidth / 2;
-            const windowHalfY = window.innerHeight / 2;
+      // make it rotate when the mouse moves
+      var mousedown = false;
+      let mouseX = 0;
+      let mouseY = 0;
+      let targetX = 0;
+      let targetY = 0;
 
-            const onDocumentMouseMove = (event) => {
-                mouseX = (event.clientX - windowHalfX);
-                mouseY = (event.clientY - windowHalfY);
-            }
+      const windowHalfX = window.innerWidth / 2;
+      const windowHalfY = window.innerHeight / 2;
 
-            document.addEventListener('mousemove', onDocumentMouseMove);
+      const onDocumentMouseDown = (event) => {
+        mousedown = true
+      };
 
-            const updateSphere = (event) => {
-                targetX = mouseX * .001;
-                targetY = mouseY * .001;
+      const onDocumentMouseUp = (event) => {
+        mousedown = false;
+      };
 
-                sphereMesh.rotation.y += .05 * (targetX - sphereMesh.rotation.y);
-                sphereMesh.rotation.x += .05 * (targetY - sphereMesh.rotation.x);
-                sphereMesh.rotation.z += .05 * (targetY - sphereMesh.rotation.x);
+      const onDocumentMouseMove = (event) => {
+        if (mousedown) {
+        mouseX = event.clientX - windowHalfX;
+        mouseY = event.clientY - windowHalfY;}
+      };
 
-                renderer.render(scene, camera);
-                requestAnimationFrame(updateSphere);
-            }
-            updateSphere();
-        </script>
-	</body>
+      document.addEventListener("mousemove", onDocumentMouseMove);
+      document.addEventListener("mousedown", onDocumentMouseDown);
+      document.addEventListener("mouseup", onDocumentMouseUp);
+
+      var move = 0;
+
+      const updateSphere = (event) => {
+        if (!mousedown) {
+          move += 0.005;
+        }
+        
+        targetX = mouseX * 0.001 + move;
+        targetY = mouseY * 0.001;
+
+        sphereMesh.rotation.y += 0.1 * (targetX - sphereMesh.rotation.y);
+        sphereMesh.rotation.x += 0.1 * (targetY - sphereMesh.rotation.x);
+        sphereMesh.rotation.z += 0.1 * (targetY - sphereMesh.rotation.x);
+
+        renderer.render(scene, camera);
+        sleep(100);
+        requestAnimationFrame(updateSphere);
+      };
+      updateSphere();
+    </script>
+  </body>
 </html>
